@@ -8,10 +8,10 @@ const concat = args => {
 }
 
 const importCrowdinString = merge => {
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    browser.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (!tabs[0]?.url.includes('crowdin.com')) return;
 
-        chrome.tabs.sendMessage(tabs[0].id, null, response => {
+        browser.tabs.sendMessage(tabs[0].id, null, response => {
             if (response) {
                 const bookString = response.replace(varRegex, (match, token) => {
                     const code = Object.keys(formattingCodes).find(key => formattingCodes[key][0] === token);
@@ -36,7 +36,7 @@ const importCrowdinString = merge => {
 }
 
 const saveString = string => {
-    chrome.storage.local.set({ text: string || null });
+    browser.storage.local.set({ text: string || null });
 }
 
 const getUnicodeCharData = charCode => {
@@ -304,7 +304,7 @@ const getWordWidth = word => {
 }
 
 const fetchGlyphs = async () => {
-    const path = chrome.runtime.getURL('font/glyph_sizes.bin');
+    const path = browser.runtime.getURL('font/glyph_sizes.bin');
     const res = await fetch(path);
     return await res.arrayBuffer();
 }
@@ -328,7 +328,7 @@ const loadImages = async () => {
         if (pageId.length < 2) pageId = '0' + pageId;
 
         const image = new Image(256, 256);
-        image.src = chrome.runtime.getURL(`font/unicode_page_${pageId}.png`);
+        image.src = browser.runtime.getURL(`font/unicode_page_${pageId}.png`);
         images[i] = image;
     }
 }
@@ -339,7 +339,7 @@ const copySectionSign = () => {
 
 const initButtons = async () => {
     const buttons = document.querySelectorAll('button');
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 
     const isOnCrowdin = tabs[0]?.url.includes('crowdin.com');
 
@@ -366,7 +366,7 @@ const unicodeChars = Array(65536);
 const images = Array(256);
 
 const loadText = async input => {
-    const { text } = await chrome.storage.local.get(['text']);
+    const { text } = await browser.storage.local.get(['text']);
     const translation = text || '';
     input.value = translation;
 }
