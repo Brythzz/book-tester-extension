@@ -93,32 +93,14 @@ const drawAsciiChar = (charCode, x, y, t) => {
     drawFormatting(x, y, w + 1 + stylingRules.bold);
 }
 
-let debug = 1;
-
 const drawUnicodeChar = ({ startX, startY, width, pageId }, x, y) => {
     const charCanvas = document.createElement('canvas');
-    // const charCanvas = document.getElementById('debug-canvas');
-    charCanvas.width = 16;
+    charCanvas.width = 18;
     charCanvas.height = 16;
 
     charCtx = charCanvas.getContext('2d');
     charCtx.imageSmoothingEnabled = false;
     charCtx.scale(2, 2);
-
-    // DEBUG STUFF
-    ctx.globalAlpha = 0.5;
-    if (debug === 1) {
-        ctx.fillStyle = '#F12';
-        ctx.fillRect(x, y, width, 8);
-        debug = 0;
-    } else {
-        ctx.fillStyle = '#2F3';
-        ctx.fillRect(x, y, width, 8);
-        debug = 1;
-    }
-
-    ctx.globalAlpha = 1;
-    // END DEBUG STUFF
 
     const glyphImage = images[pageId];
     charCtx.drawImage(glyphImage, startX, startY, width * 2, 16, 0, 0, width, 8);
@@ -128,6 +110,8 @@ const drawUnicodeChar = ({ startX, startY, width, pageId }, x, y) => {
     charCtx.fillRect(0, 0, width + 2, 16);
 
     ctx.drawImage(charCanvas, 0, 0, width * 2, 16, x, y, width, 8);
+    if (stylingRules.bold)
+        ctx.drawImage(charCanvas, 0, 0, width * 2, 16, x + 1, y, width, 8);
 
     drawFormatting(x, y, width + (width * 2 % 2 === 0 ? 1 : .5) + stylingRules.bold);
 }
@@ -319,10 +303,9 @@ const getWordWidth = word => {
         
         const asciiChar = asciiChars[charCode];
 
-        if (asciiChar)
-            length += asciiChar.w + 1;
-        else
-            length += getUnicodeCharData(charCode).width + 1;
+        length += asciiChar
+            ? asciiChar.w + 1
+            : getUnicodeCharData(charCode).width + 1;
     }
 
     if (stylingRules.bold) length += word.length; // +1px for each char
@@ -342,9 +325,6 @@ const loadGlyphs = async () => {
     for (let i in bytes) {
         const byte = bytes[i];
         unicodeChars[i] = [byte >>> 4, byte & 15];
-
-        if (unicodeChars[i][0] % 1 !== 0 || unicodeChars[i][1] % 1 !== 0)
-            console.log('Non integer value for char: ', String.fromCharCode(i));
     }
 }
 
