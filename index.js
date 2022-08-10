@@ -208,24 +208,14 @@ const applyStyle = char => {
     if (!char) return;
     const modifier = char.toLowerCase();
 
-    switch (modifier) {
-        case 'l':
-            stylingRules.bold = true;
-            break;
-        case 'm':
-            stylingRules.strikethrough = true;
-            break;
-        case 'n':
-            stylingRules.underline = true;
-            break;
-        case 'o':
-            stylingRules.italic = true;
-            break;
-        case 'r':
+    if (modifier in formattingCodes) {
+        const [style, color] = formattingCodes[modifier];
+        if (color) {
             resetStyle();
-            break;
-        default:
-            stylingRules.color = formattingCodes[modifier]?.[1] || stylingRules.color;
+            stylingRules.color = color;
+        }
+        else
+            stylingRules[style] = true;
     }
 }
 
