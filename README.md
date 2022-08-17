@@ -5,7 +5,7 @@ This extension helps you easily check how your translations will look on in-game
 
 ### Installation
 
-The extension is available [for Chrome](https://chrome.google.com/) and [for Firefox](https://addons.mozilla.org/)
+The extension is available [for Chrome](https://chrome.google.com/webstore/detail/book-tester/cbandnohjfaekpehffhamgjnijebldeb) and [for Firefox](https://addons.mozilla.org/addon/book-tester)
 
 ### Screenshot
 
