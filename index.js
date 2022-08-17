@@ -219,6 +219,8 @@ const applyStyle = char => {
     }
 }
 
+const applyStyles = chars => chars.map(applyStyle);
+
 const drawWord = (word, x, y) => {
     let currentX = x;
 
@@ -226,23 +228,27 @@ const drawWord = (word, x, y) => {
         return [y, currentX];
     }
 
+    let tempStyles = [];
+
     for (let i = 0; i < word.length; i++) {
         const charCode = word[i].charCodeAt();
 
         if (charCode === 167) {
-            applyStyle(word[i + 1]);
+            tempStyles.push(word[i + 1]);
             i++;
             continue;
         }
 
         const asciiChar = asciiChars[charCode];
+        applyStyles(tempStyles);
 
         if (asciiChar) {
             let { w, t } = asciiChar;
             if (stylingRules.bold) w++;
 
-            if (currentX + w > 132) {
+            if (currentX + w > 131) {
                 resetStyle();
+                applyStyles(tempStyles);
                 return drawWord(word.substring(i), marginLeft, y + 9);
             }
 
@@ -253,8 +259,9 @@ const drawWord = (word, x, y) => {
             const charData = getUnicodeCharData(charCode);
             if (!charData) continue;
             
-            if (currentX + charData.width + stylingRules.bold > 132) {
+            if (currentX + charData.width + stylingRules.bold > 131) {
                 resetStyle();
+                applyStyles(tempStyles);
                 return drawWord(word.substring(i), marginLeft, y + 9);
             }
 
@@ -263,7 +270,7 @@ const drawWord = (word, x, y) => {
 
             currentX += width + (width * 2 % 2 === 0 ? 1 : .5) + stylingRules.bold;
         }
-
+        tempStyles = [];
     }
 
     return [y, currentX];
