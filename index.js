@@ -179,10 +179,9 @@ const drawText = async text => {
 
             const isOverflowing = (!isLongWord && currentX + wordWidth + spaceWidth > 126)
                 || (isLongWord && words.length > 1 && i > 0);
-    
+
             if (isOverflowing) {
                 currentX = marginLeft - spaceWidth;
-                resetStyle();
                 currentY += 9;
             }
 
@@ -219,8 +218,6 @@ const applyStyle = char => {
     }
 }
 
-const applyStyles = chars => chars.map(applyStyle);
-
 const drawWord = (word, x, y) => {
     let currentX = x;
 
@@ -234,23 +231,19 @@ const drawWord = (word, x, y) => {
         const charCode = word[i].charCodeAt();
 
         if (charCode === 167) {
-            tempStyles.push(word[i + 1]);
+            applyStyle(word[i + 1]);
             i++;
             continue;
         }
 
         const asciiChar = asciiChars[charCode];
-        applyStyles(tempStyles);
 
         if (asciiChar) {
             let { w, t } = asciiChar;
             if (stylingRules.bold) w++;
 
-            if (currentX + w > 131) {
-                resetStyle();
-                applyStyles(tempStyles);
+            if (currentX + w > 131)
                 return drawWord(word.substring(i), marginLeft, y + 9);
-            }
 
             drawAsciiChar(charCode, currentX, y, t);
             currentX += w + 1;
@@ -258,12 +251,9 @@ const drawWord = (word, x, y) => {
         else {
             const charData = getUnicodeCharData(charCode);
             if (!charData) continue;
-            
-            if (currentX + charData.width + stylingRules.bold > 131) {
-                resetStyle();
-                applyStyles(tempStyles);
+
+            if (currentX + charData.width + stylingRules.bold > 131)
                 return drawWord(word.substring(i), marginLeft, y + 9);
-            }
 
             drawUnicodeChar(charData, currentX, y);
             const width = charData.width;
@@ -297,7 +287,7 @@ const getWordWidth = word => {
             c++;
             continue;
         }
-        
+
         const asciiChar = asciiChars[charCode];
 
         length += asciiChar
