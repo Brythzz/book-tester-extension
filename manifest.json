@@ -1,7 +1,7 @@
 {
   "name": "Book Tester",
   "description": "Simple extension to play around with minecraft books",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "manifest_version": 3,
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
